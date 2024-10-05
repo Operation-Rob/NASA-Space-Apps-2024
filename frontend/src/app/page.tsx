@@ -21,7 +21,7 @@ export default function LandsatMap() {
 
   return (
     <div className="relative h-screen w-screen">
-      <MapComponent
+      {customIcon != null && (<MapComponent
         pins={pins}
         setPins={setPins}
         customIcon={customIcon}
@@ -29,7 +29,7 @@ export default function LandsatMap() {
         lngInput={lngInput}
         setLatInput={setLatInput}
         setLngInput={setLngInput}
-      />
+      />)}
       <Sidebar
         pins={pins}
         setPins={setPins}

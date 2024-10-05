@@ -3,6 +3,7 @@
 
 import React, { useState } from "react";
 import { generateMagicString } from "@/utils/pinUtils";
+import { Pin } from "@/types/types";
 import Modal from "./Modal";
 
 interface SubscribeModalProps {

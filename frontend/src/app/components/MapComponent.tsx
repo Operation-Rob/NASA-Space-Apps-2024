@@ -6,6 +6,8 @@ import "leaflet/dist/leaflet.css";
 import PinAdder from "./PinAdder";
 import SearchControl from "./SearchControl";
 import { Pin } from "@/types/types";
+import { Icon, IconOptions, DivIcon } from 'leaflet'; // Ensure these are imported
+
 
 // Dynamically import CustomMarker with SSR disabled
 const CustomMarker = dynamic(() => import("./CustomMarker"), {
@@ -25,7 +27,7 @@ const TileLayer = dynamic(
 interface MapComponentProps {
   pins: Pin[];
   setPins: React.Dispatch<React.SetStateAction<Pin[]>>;
-  customIcon: React.ReactNode;
+  customIcon: Icon<IconOptions> | DivIcon | undefined;
   latInput: string;
   lngInput: string;
   setLatInput: React.Dispatch<React.SetStateAction<string>>;

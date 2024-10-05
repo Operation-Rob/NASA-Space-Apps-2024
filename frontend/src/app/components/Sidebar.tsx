@@ -28,7 +28,7 @@ export default function Sidebar({
   const resizerRef = useRef<HTMLDivElement>(null);
   const isResizing = useRef(false);
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseDown = () => {
     isResizing.current = true;
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);

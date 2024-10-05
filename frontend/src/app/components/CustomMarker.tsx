@@ -3,20 +3,22 @@
 // components/CustomMarker.js
 import { Marker, Popup } from 'react-leaflet';
 import { useRef } from 'react';
+import { Marker as LeafletMarker } from 'leaflet'; // Import the Leaflet Marker type
+
+
 
 import { Pin } from '@/types/types';
 import { DivIcon, Icon, IconOptions } from 'leaflet';
 
 interface CustomMarkerProps {
     pin: Pin;
-    isHovered: boolean;
     onDelete: (id: number) => void;
     customIcon: Icon<IconOptions> | DivIcon | undefined;
   }
 
 
 const CustomMarker: React.FC<CustomMarkerProps> = ({ pin, onDelete, customIcon }) => {
-  const markerRef = useRef<typeof Marker>(null);
+  const markerRef = useRef<LeafletMarker>(null);
 
   return (
     <Marker

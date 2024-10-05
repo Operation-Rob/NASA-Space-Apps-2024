@@ -21,8 +21,9 @@ interface SRDataModalProps {
 
 interface SRDataPoint {
   date: string;
-  [key: string]: number; // For different frequency ranges
+  [key: string]: string | number; // Allow both string and number types
 }
+
 
 export default function SRDataModal({ pin, onClose }: SRDataModalProps) {
   const [srData, setSrData] = useState<SRDataPoint[]>([]);
@@ -41,7 +42,8 @@ export default function SRDataModal({ pin, onClose }: SRDataModalProps) {
         }
         const data = await response.json();
         setSrData(data);
-      } catch (err: Error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (err: any) {
         setError(err.message || "An error occurred");
       } finally {
         setLoading(false);
