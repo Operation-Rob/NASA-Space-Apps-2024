@@ -16,22 +16,22 @@ interface CustomMarkerProps {
 const CustomMarker: React.FC<CustomMarkerProps> = ({ pin, isHovered, onDelete, customIcon }) => {
   const markerRef = useRef<typeof Marker>(null);
 
-  useEffect(() => {
-    if (isHovered && markerRef.current) {
-      const markerElement = markerRef.current.getElement();
-      if (markerElement) {
-        markerElement.classList.add('jump');
+  // useEffect(() => {
+  //   if (isHovered && markerRef.current) {
+  //     const markerElement = markerRef.current.getElement();
+  //     if (markerElement) {
+  //       markerElement.classList.add('jump');
 
-        // Remove the 'jump' class after the animation completes
-        const handleAnimationEnd = () => {
-          markerElement.classList.remove('jump');
-          markerElement.removeEventListener('animationend', handleAnimationEnd);
-        };
+  //       // Remove the 'jump' class after the animation completes
+  //       const handleAnimationEnd = () => {
+  //         markerElement.classList.remove('jump');
+  //         markerElement.removeEventListener('animationend', handleAnimationEnd);
+  //       };
 
-        markerElement.addEventListener('animationend', handleAnimationEnd);
-      }
-    }
-  }, [isHovered]);
+  //       markerElement.addEventListener('animationend', handleAnimationEnd);
+  //     }
+  //   }
+  // }, [isHovered]);
 
   return (
     <Marker
