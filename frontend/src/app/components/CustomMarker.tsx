@@ -1,3 +1,5 @@
+"use client";
+
 // components/CustomMarker.js
 import { Marker, Popup } from 'react-leaflet';
 import { useEffect, useRef } from 'react';
