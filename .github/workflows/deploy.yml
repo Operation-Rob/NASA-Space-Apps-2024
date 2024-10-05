@@ -40,6 +40,16 @@ jobs:
         source: "."
         target: "/root/project"
 
+    - name: Create .env file on server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        script: |
+          echo "${{ secrets.ENV_FILE_CONTENT }}" > /root/project/.env
+
     - name: Deploy using Docker Compose
       uses: appleboy/ssh-action@master
       with:
