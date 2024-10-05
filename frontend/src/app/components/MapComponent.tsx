@@ -25,7 +25,7 @@ const TileLayer = dynamic(
 interface MapComponentProps {
   pins: Pin[];
   setPins: React.Dispatch<React.SetStateAction<Pin[]>>;
-  customIcon: any;
+  customIcon: React.ReactNode;
   latInput: string;
   lngInput: string;
   setLatInput: React.Dispatch<React.SetStateAction<string>>;
@@ -57,6 +57,7 @@ export default function MapComponent({
           key={pin.id}
           pin={pin}
           customIcon={customIcon}
+          onDelete={(id) => setPins((prevPins) => prevPins.filter((p) => p.id !== id))}
         />
       ))}
 

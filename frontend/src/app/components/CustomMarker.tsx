@@ -2,7 +2,7 @@
 
 // components/CustomMarker.js
 import { Marker, Popup } from 'react-leaflet';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 import { Pin } from '@/types/types';
 import { DivIcon, Icon, IconOptions } from 'leaflet';
@@ -15,25 +15,8 @@ interface CustomMarkerProps {
   }
 
 
-const CustomMarker: React.FC<CustomMarkerProps> = ({ pin, isHovered, onDelete, customIcon }) => {
+const CustomMarker: React.FC<CustomMarkerProps> = ({ pin, onDelete, customIcon }) => {
   const markerRef = useRef<typeof Marker>(null);
-
-  // useEffect(() => {
-  //   if (isHovered && markerRef.current) {
-  //     const markerElement = markerRef.current.getElement();
-  //     if (markerElement) {
-  //       markerElement.classList.add('jump');
-
-  //       // Remove the 'jump' class after the animation completes
-  //       const handleAnimationEnd = () => {
-  //         markerElement.classList.remove('jump');
-  //         markerElement.removeEventListener('animationend', handleAnimationEnd);
-  //       };
-
-  //       markerElement.addEventListener('animationend', handleAnimationEnd);
-  //     }
-  //   }
-  // }, [isHovered]);
 
   return (
     <Marker
