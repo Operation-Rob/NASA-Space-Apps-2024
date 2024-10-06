@@ -136,7 +136,7 @@ def send_updates(db: Session):
     ).all():
         # Generate unsubscribe token and link
         token_str = generate_token(subscriber.email, db)
-        unsubscribe_url = f"http://your_domain.com/api/unsubscribe?token={token_str}"
+        unsubscribe_url = f"https://satsync.org/api/unsubscribe?token={token_str}"
 
         # Send update email
         subject = "New Landsat Data Update"
