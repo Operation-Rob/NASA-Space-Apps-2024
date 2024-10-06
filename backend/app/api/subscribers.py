@@ -90,14 +90,14 @@ def subscribe(
     confirm_url = f"{request.url_for('confirm_subscription')}?token={token_str}"
 
     subject = "Confirm your subscription"
-    body = f"""
-    <p>Dear Subscriber,</p>
-    <p>Please confirm your subscription by clicking the link below:</p>
-    <p><a href="{confirm_url}">Confirm Subscription</a></p>
-    <p>This link will expire in 24 hours.</p>
-    """
+    with open("./email_template.html", "r") as file:
+        html_template = file.read()
 
-    background_tasks.add_task(send_email, email, subject, body)
+    # Use Python string formatting (or Jinja2) to insert the confirmation URL
+    html_content = html_template.replace("{{ confirm_url }}", confirm_url)
+
+
+    background_tasks.add_task(send_email, email, subject, html_content)
 
     return {"message": "Confirmation email sent. Please check your inbox."}
 

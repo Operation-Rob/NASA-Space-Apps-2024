@@ -19,6 +19,8 @@ const SatelliteLayer = dynamic(() => import("./SatelliteLayer"), {
   ssr: false,
 });
 
+const GridLayer = dynamic(() => import("./GridLayer"), { ssr: false });
+
 // Similarly, dynamically import MapContainer and TileLayer
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
@@ -78,6 +80,7 @@ export default function MapComponent({
         onLngChange={setLngInput}
       />
       <SatelliteLayer customIcon={satelliteIcon} />
+      <GridLayer minZoom={8} />
     </MapContainer>
 
     
