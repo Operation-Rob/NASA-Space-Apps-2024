@@ -9,6 +9,17 @@ services:
     env_file:
       - ./.env
 
+  db:
+    image: postgres:13
+    container_name: database
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: fastapi_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   backend:
     build: ./backend
     container_name: fastapi_app
@@ -17,11 +28,16 @@ services:
       - ./backend:/backend
     env_file:
       - ./.env
+    depends_on:
+      - db
 
   nginx:
     build: ./nginx
     container_name: nginx
     ports:
-      - "80:80"
+      - "3000:80"
     depends_on:
       - backend
+
+volumes:
+  postgres_data:

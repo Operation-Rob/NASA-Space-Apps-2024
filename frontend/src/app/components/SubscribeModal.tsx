@@ -26,7 +26,7 @@ const SubscribeModal: React.FC<SubscribeModalProps> = ({ onClose, pins }) => {
     const data = generateMagicString(pins);
 
     try {
-      const response = await fetch("/api/subscribe", {
+      const response = await fetch("/api/subscribers", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

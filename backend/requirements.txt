@@ -1,3 +1,9 @@
 fastapi
+fastapi-admin
 uvicorn
 skyfield
+pydantic
+pydantic[email]
+pydantic-settings
+psycopg2-binary
+SQLAlchemy
