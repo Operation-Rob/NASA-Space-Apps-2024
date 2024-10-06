@@ -14,4 +14,4 @@ app.include_router(subscribers.router, prefix="", tags=["Subscribers"])
 
 @app.get("/")
 def read_root():
-    return {"message": "Hello World!"}
+    return {"message": "Hello World!1"}
