@@ -26,7 +26,7 @@ def get_scene(lat: float, lng: float) -> list[bytes]:
     prefix = 'collection02/level-2/standard/oli-tirs/2024/'+str(path).zfill(3)+'/'+str(row).zfill(3)+'/'    # TODO: allow years other than 2024
 
     response = s3.list_objects_v2(
-        Bucket=s3.bucket_name,
+        Bucket=bucket_name,
         Prefix=prefix,
         RequestPayer='requester',
         Delimiter='/'
@@ -45,7 +45,7 @@ def get_scene(lat: float, lng: float) -> list[bytes]:
     band_contents = []
     for band in range(1,8):
         obj_key = prefixes[0]+prefixes[0].split('/')[-2]+'_SR_B'+str(band)+'.TIF'
-        response = s3.get_object(Bucket=s3.bucket_name, Key=obj_key, RequestPayer='requester')
+        response = s3.get_object(Bucket=bucket_name, Key=obj_key, RequestPayer='requester')
         content = response['Body'].read()
         band_contents.append(content)
     
