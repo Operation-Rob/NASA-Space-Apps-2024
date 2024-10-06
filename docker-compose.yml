@@ -44,7 +44,7 @@ services:
     container_name: tileserver
     volumes:
       - /data:/data
-    command: --verbose --file /data/landsat_grid.mbtiles --public_url https://satsync.org/tileserver/
+    command: --verbose --file /data/landsat_grid.mbtiles --public_url https://satsync.org/tileserver/ --cors
     depends_on:
       - frontend
 
