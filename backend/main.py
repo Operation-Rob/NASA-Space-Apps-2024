@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from app.api import satellite, subscribers, sr
+from app.api.LatLongToWRS.get_wrs import ConvertToWRS
 from app.db.init_db import init_db
 from app.db.session import SessionLocal
 from app.models.subscriber import Subscriber as SubscriberModel
