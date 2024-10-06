@@ -1,5 +1,6 @@
 import boto3
 import os
+import numpy as np
 from LatLongToWRS.get_wrs import ConvertToWRS
 
 import rasterio
@@ -26,7 +27,7 @@ def get_path_row(lat: float, lng: float) -> tuple[float, float]:
 
     return path, row
 
-def get_scene(lat: float, lng: float) -> bytes:
+def get_scene(lat: float, lng: float) -> list[bytes]:
     path, row = get_path_row(lat, lng)
 
     bucket_name = 'usgs-landsat'
@@ -49,28 +50,31 @@ def get_scene(lat: float, lng: float) -> bytes:
 
     prefixes.sort(key=lambda x: x[10:-6], reverse=True)
     
-    obj_key = prefixes[0]+prefixes[0].split('/')[-2]+'_SR_B1.TIF'
-    response = s3.get_object(Bucket=bucket_name, Key=obj_key, RequestPayer='requester')
-    content = response['Body'].read()
+    band_contents = []
+    for band in range(1,8):
+        obj_key = prefixes[0]+prefixes[0].split('/')[-2]+'_SR_B'+str(band)+'.TIF'
+        response = s3.get_object(Bucket=bucket_name, Key=obj_key, RequestPayer='requester')
+        content = response['Body'].read()
+        band_contents.append(content)
     
-    return content
+    return band_contents
 
-def get_pixel(lat: float, lng: float):
-    content = get_scene(lat, lng)
+def get_pixel(lat: float, lng: float) -> list[np.uint16]:
+    band_contents = get_scene(lat, lng)
 
-    with MemoryFile(content) as scene_file:
-        with scene_file.open() as scene:
-            x, y = transform('EPSG:4326', scene.crs, [lng], [lat])
-            row, col = scene.index(x[0], y[0])
-            value = scene.read(1)[row,col]    # read from band 1
+    values = []
+    for content in band_contents:
+        with MemoryFile(content) as scene_file:
+            with scene_file.open() as scene:
+                x, y = transform('EPSG:4326', scene.crs, [lng], [lat])
+                row, col = scene.index(x[0], y[0])
+                value = scene.read(1)[row,col]    # read from band 1
+                values.append(value)
+                if not value:
+                    print(f"Note: found None value for pixel lat: {lat} lng: {lng}")
+
+    return values
     
-    if value:
-        return value
-    else:
-        raise Exception("Could not extract value from scene file")
 
-def scale_value(val):
+def scale_value(val: int) -> float:
     return val / 2**16
-    
-
-print(get_pixel(-31.977395619880962, 115.81794309789537))

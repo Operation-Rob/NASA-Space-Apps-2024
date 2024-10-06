@@ -1,7 +1,7 @@
 import base64
 import json
 
-def decode_state(state: str) -> list:
+def decode_state(state: str) -> list[dict]:
     try:
         json_bytes = base64.b64decode(state)
         json_state = json_bytes.decode('utf-8')
