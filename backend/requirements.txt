@@ -1,3 +1,9 @@
+boto3
 fastapi
-uvicorn
+rasterio
 skyfield
+uvicorn
+
+# LatLongToWRS dependencies
+GDAL
+shapely

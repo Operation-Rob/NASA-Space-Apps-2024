@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException
 from skyfield.api import load, EarthSatellite
 from datetime import datetime, timedelta
 
+from utils import *
+
 app = FastAPI(root_path="/api")
 
 # Define TLE data for Landsat 8 (this can be updated periodically)
