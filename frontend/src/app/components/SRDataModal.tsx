@@ -1,7 +1,6 @@
 // components/SRDataModal.tsx
 import React from "react";
 import Modal from "./Modal";
-import { Pin } from "@/types/types";
 import {
   BarChart,
   Bar,
@@ -11,33 +10,28 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { Pin } from "@/types/types";
 
 interface SRDataModalProps {
   pin: Pin;
   onClose: () => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SRDataModal: React.FC<SRDataModalProps> = ({ pin, onClose }) => {
-  if (pin.error != null) {
-    return (
-      <Modal title={pin.name.concat(" Reflectance Data")} onClose={onClose}>
-        <p className="text-red-500">{pin.error}</p>
-      </Modal>
-    );
-  }
-
-  if (!pin.data) {
-    return null; // You could also show a message like "Loading data..." or "No data available"
-  }
-
-  // Transform the pin data into a format that Recharts can use
-  const chartData = Object.keys(pin.data).map((key) => ({
-    name: key,
-    value: pin.data[key],
-  }));
+  // Define the chart data with random values between 0 and 1
+  const chartData = [
+    { name: "Coastal/Aerosol", value: Math.random() },
+    { name: "Blue", value: Math.random() },
+    { name: "Green", value: Math.random() },
+    { name: "Red", value: Math.random() },
+    { name: "NIR", value: Math.random() },
+    { name: "SWIR 1", value: Math.random() },
+    { name: "SWIR 2", value: Math.random() },
+  ];
 
   return (
-    <Modal title={pin.name.concat(" Reflectance Data")} onClose={onClose}>
+    <Modal title={"Reflectance Data"} onClose={onClose}>
       <div style={{ width: "100%", height: 300 }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
