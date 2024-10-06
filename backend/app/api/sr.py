@@ -49,6 +49,7 @@ def get_scene(lat: float, lng: float) -> list[bytes]:
     
     return band_contents
 
+@app.get("/pixel/")
 def get_pixel(lat: float, lng: float) -> list[int]:
     band_contents = get_scene(lat, lng)
 

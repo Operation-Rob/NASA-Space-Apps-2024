@@ -1,7 +1,13 @@
 boto3
 fastapi
+fastapi-admin
+psycopg2-binary
+pydantic
+pydantic[email]
+pydantic-settings
 rasterio
 skyfield
+SQLAlchemy
 uvicorn
 
 # LatLongToWRS dependencies

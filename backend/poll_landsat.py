@@ -1,4 +1,4 @@
-from s3 import s3, bucket_name
+from app.utils.s3 import s3, bucket_name
 import time
 
 

@@ -8,6 +8,9 @@ import SearchControl from "./SearchControl";
 import { Pin } from "@/types/types";
 import { Icon, IconOptions, DivIcon } from 'leaflet'; // Ensure these are imported
 
+const VectorTileLayer = dynamic(() => import("./VectorTileLayer"), {
+  ssr: false,
+});
 
 // Dynamically import CustomMarker with SSR disabled
 const CustomMarker = dynamic(() => import("./CustomMarker"), {
@@ -61,6 +64,8 @@ export default function MapComponent({
         attribution="&copy; OpenStreetMap contributors"
       />
 
+      <VectorTileLayer />
+
       {pins.map((pin) => (
         <CustomMarker
           key={pin.id}
@@ -79,9 +84,5 @@ export default function MapComponent({
       />
       <SatelliteLayer satellites={[{ id: 'landsat_8', customIcon: satelliteIcon }, { id: 'landsat_9', customIcon: satelliteIcon }]} />
     </MapContainer>
-
-    
-
-
   );
 }

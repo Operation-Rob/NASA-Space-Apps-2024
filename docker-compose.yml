@@ -9,6 +9,17 @@ services:
     env_file:
       - ./.env
 
+  db:
+    image: postgres:13
+    container_name: database
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: fastapi_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   backend:
     build: ./backend
     container_name: fastapi_app
@@ -17,6 +28,8 @@ services:
       - ./backend:/backend
     env_file:
       - ./.env
+    depends_on:
+      - db
 
   nginx:
     build: ./nginx
@@ -25,3 +38,15 @@ services:
       - "80:80"
     depends_on:
       - backend
+
+  tileserver:
+    image: maptiler/tileserver-gl
+    container_name: tileserver
+    volumes:
+      - /data:/data
+    command: --verbose --file /data/landsat_grid.mbtiles --public_url https://satsync.org/tileserver/
+    depends_on:
+      - frontend
+
+volumes:
+  postgres_data:
