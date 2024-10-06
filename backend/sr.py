@@ -1,18 +1,10 @@
-import boto3
-import os
+from s3 import s3, bucket_name
 from LatLongToWRS.get_wrs import ConvertToWRS
 
 import rasterio
 from rasterio.io import MemoryFile
 from rasterio.warp import transform
 
-
-s3 = boto3.client(
-    's3',
-    aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
-    aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
-    region_name='us-west-2'
-)
 conv = ConvertToWRS(shapefile="./LatLongToWRS/WRS2_descending.shp")
 
 def get_path_row(lat: float, lng: float) -> tuple[float, float]:
@@ -29,11 +21,10 @@ def get_path_row(lat: float, lng: float) -> tuple[float, float]:
 def get_scene(lat: float, lng: float) -> list[bytes]:
     path, row = get_path_row(lat, lng)
 
-    bucket_name = 'usgs-landsat'
     prefix = 'collection02/level-2/standard/oli-tirs/2024/'+str(path).zfill(3)+'/'+str(row).zfill(3)+'/'    # TODO: allow years other than 2024
 
     response = s3.list_objects_v2(
-        Bucket=bucket_name,
+        Bucket=s3.bucket_name,
         Prefix=prefix,
         RequestPayer='requester',
         Delimiter='/'
@@ -52,7 +43,7 @@ def get_scene(lat: float, lng: float) -> list[bytes]:
     band_contents = []
     for band in range(1,8):
         obj_key = prefixes[0]+prefixes[0].split('/')[-2]+'_SR_B'+str(band)+'.TIF'
-        response = s3.get_object(Bucket=bucket_name, Key=obj_key, RequestPayer='requester')
+        response = s3.get_object(Bucket=s3.bucket_name, Key=obj_key, RequestPayer='requester')
         content = response['Body'].read()
         band_contents.append(content)
     
