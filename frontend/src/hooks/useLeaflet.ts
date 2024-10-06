@@ -5,6 +5,7 @@ import type * as Leaflet from "leaflet"; // Import types only
 export default function useLeaflet() {
   const LRef = useRef<typeof Leaflet>();
   const [customIcon, setCustomIcon] = useState<Leaflet.Icon | null>(null);
+  const [satelliteIcon, setSatelliteIcon] = useState<Leaflet.Icon | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -37,9 +38,24 @@ export default function useLeaflet() {
           shadowSize: [41, 41],
         });
         setCustomIcon(customIcon);
+
+
+        const satelliteIcon = new L.Icon({
+            iconUrl:
+              "https://cdn.icon-icons.com/icons2/2479/PNG/512/satellite_icon_149781.png",
+            iconRetinaUrl:
+              "https://cdn.icon-icons.com/icons2/2479/PNG/512/satellite_icon_149781.png",
+            iconSize: [30, 30],
+            iconAnchor: [15, 15],
+            popupAnchor: [0, -15],
+            shadowUrl:
+              "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+            shadowSize: [41, 41],
+          });
+        setSatelliteIcon(satelliteIcon);
       }
     })();
   }, []);
 
-  return { LRef, customIcon };
+  return { LRef, customIcon, satelliteIcon };
 }

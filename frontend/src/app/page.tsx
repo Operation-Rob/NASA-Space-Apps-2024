@@ -10,7 +10,7 @@ import SubscribeModal from "./components/SubscribeModal";
 import { Pin } from "@/types/types";
 
 export default function LandsatMap() {
-  const { customIcon } = useLeaflet();
+  const { customIcon, satelliteIcon } = useLeaflet();
 
   const [pins, setPins] = useState<Pin[]>([]);
   const [latInput, setLatInput] = useState("");
@@ -21,10 +21,11 @@ export default function LandsatMap() {
 
   return (
     <div className="relative h-screen w-screen">
-      {customIcon != null && (<MapComponent
+      {customIcon != null && satelliteIcon != null && (<MapComponent
         pins={pins}
         setPins={setPins}
         customIcon={customIcon}
+        satelliteIcon={satelliteIcon}
         latInput={latInput}
         lngInput={lngInput}
         setLatInput={setLatInput}

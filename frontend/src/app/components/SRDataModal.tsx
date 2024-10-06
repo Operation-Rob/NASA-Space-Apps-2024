@@ -21,7 +21,7 @@ interface SRDataModalProps {
 
 interface SRDataPoint {
   date: string;
-  [key: string]: string | number; // Allow both string and number types
+  [key: string]: string | number;
 }
 
 

@@ -14,6 +14,11 @@ const CustomMarker = dynamic(() => import("./CustomMarker"), {
   ssr: false,
 });
 
+// Dynamically import SatelliteLayer with SSR disabled
+const SatelliteLayer = dynamic(() => import("./SatelliteLayer"), {
+  ssr: false,
+});
+
 // Similarly, dynamically import MapContainer and TileLayer
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
@@ -28,6 +33,7 @@ interface MapComponentProps {
   pins: Pin[];
   setPins: React.Dispatch<React.SetStateAction<Pin[]>>;
   customIcon: Icon<IconOptions> | DivIcon | undefined;
+  satelliteIcon: Icon<IconOptions> | DivIcon | undefined;
   latInput: string;
   lngInput: string;
   setLatInput: React.Dispatch<React.SetStateAction<string>>;
@@ -38,6 +44,7 @@ export default function MapComponent({
   pins,
   setPins,
   customIcon,
+  satelliteIcon,
   latInput,
   lngInput,
   setLatInput,
@@ -70,6 +77,11 @@ export default function MapComponent({
         onLatChange={setLatInput}
         onLngChange={setLngInput}
       />
+      <SatelliteLayer customIcon={satelliteIcon} />
     </MapContainer>
+
+    
+
+
   );
 }
