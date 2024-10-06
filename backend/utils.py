@@ -10,3 +10,6 @@ def decode_state(state: str) -> list[dict]:
         raise Exception("Invalid encoded state passed")
 
     return state_obj
+
+def scale_value(val: int) -> float:
+    return val / 2**16

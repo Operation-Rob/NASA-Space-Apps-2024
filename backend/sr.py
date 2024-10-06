@@ -1,6 +1,5 @@
 import boto3
 import os
-import numpy as np
 from LatLongToWRS.get_wrs import ConvertToWRS
 
 import rasterio
@@ -59,7 +58,7 @@ def get_scene(lat: float, lng: float) -> list[bytes]:
     
     return band_contents
 
-def get_pixel(lat: float, lng: float) -> list[np.uint16]:
+def get_pixel(lat: float, lng: float) -> list[int]:
     band_contents = get_scene(lat, lng)
 
     values = []
@@ -69,12 +68,8 @@ def get_pixel(lat: float, lng: float) -> list[np.uint16]:
                 x, y = transform('EPSG:4326', scene.crs, [lng], [lat])
                 row, col = scene.index(x[0], y[0])
                 value = scene.read(1)[row,col]    # read from band 1
-                values.append(value)
+                values.append(int(value))
                 if not value:
                     print(f"Note: found None value for pixel lat: {lat} lng: {lng}")
 
     return values
-    
-
-def scale_value(val: int) -> float:
-    return val / 2**16

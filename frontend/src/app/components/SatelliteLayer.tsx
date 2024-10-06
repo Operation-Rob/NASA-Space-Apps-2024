@@ -6,81 +6,124 @@ import { Marker, Polyline } from "react-leaflet";
 import { Icon, IconOptions, DivIcon } from "leaflet";
 
 interface SatelliteLayerProps {
-  customIcon: Icon<IconOptions> | DivIcon | undefined;
+  satellites: { id: string; customIcon: Icon<IconOptions> | DivIcon | undefined }[];
 }
 
-export default function SatelliteLayer({ customIcon }: SatelliteLayerProps) {
-  // State for the Landsat 8 satellite position and trajectory
-  const [satellitePosition, setSatellitePosition] = useState<LatLngTuple | null>(null);
-  const [satelliteTrajectory, setSatelliteTrajectory] = useState<LatLngTuple[]>([]);
-  const [forecastTrajectory, setForecastTrajectory] = useState<LatLngTuple[]>([]); // New state for forecast
+interface SatelliteData {
+  position: LatLngTuple | null;
+  trajectory: LatLngTuple[];
+  forecastTrajectory: LatLngTuple[];
+}
 
-  // Fetch the current position of Landsat 8 periodically
+export default function SatelliteLayer({ satellites }: SatelliteLayerProps) {
+  // State for the satellites' positions and trajectories
+  const [satelliteData, setSatelliteData] = useState<{ [key: string]: SatelliteData }>({});
+
+  // Fetch the current position of each satellite periodically
   useEffect(() => {
-    const fetchSatellitePosition = async () => {
+    const fetchSatellitePosition = async (satelliteId: string) => {
       try {
-        const response = await fetch("/api/satellite/landsat_8");
+        const response = await fetch(`/api/satellite/${satelliteId}`);
         const data = await response.json();
         if (data.latitude && data.longitude) {
           const currentPosition: LatLngTuple = [data.latitude, data.longitude];
-          setSatellitePosition(currentPosition);
 
-          // Append current position to trajectory for visualization
-          setSatelliteTrajectory((prevTrajectory) => {
-            // Limit the length of the trajectory for performance
-            const updatedTrajectory = [...prevTrajectory, currentPosition];
-            return updatedTrajectory.length > 100 ? updatedTrajectory.slice(1) : updatedTrajectory;
+          setSatelliteData((prevData) => {
+            const updatedData = { ...prevData };
+            const currentData = updatedData[satelliteId] || {
+              position: null,
+              trajectory: [],
+              forecastTrajectory: []
+            };
+
+            // Update position and trajectory
+            const updatedTrajectory = [...currentData.trajectory, currentPosition];
+            if (updatedTrajectory.length > 100) updatedTrajectory.shift(); // Limit trajectory length
+
+            updatedData[satelliteId] = {
+              ...currentData,
+              position: currentPosition,
+              trajectory: updatedTrajectory
+            };
+            return updatedData;
           });
         }
       } catch (error) {
-        console.error("Error fetching satellite position:", error);
+        console.error(`Error fetching position for satellite ${satelliteId}:`, error);
       }
     };
 
-    // Fetch position every 10 seconds
-    fetchSatellitePosition();
-    const interval = setInterval(fetchSatellitePosition, 10000);
+	satellites.map((satellite) => fetchSatellitePosition(satellite.id));
 
-    return () => clearInterval(interval);
-  }, []);
+    const intervals = satellites.map((satellite) =>
+      setInterval(() => fetchSatellitePosition(satellite.id), 10000) // Fetch position every 10 seconds
+    );
 
-  // Fetch the forecasted trajectory
+    return () => intervals.forEach(clearInterval);
+  }, [satellites]);
+
+  // Fetch the forecasted trajectory for each satellite
   useEffect(() => {
-    const fetchForecastTrajectory = async () => {
+    const fetchForecastTrajectory = async (satelliteId: string) => {
       try {
-        const response = await fetch("/api/satellite/landsat_8/forecast");
+        const response = await fetch(`/api/satellite/${satelliteId}/forecast`);
         const data = await response.json();
         if (data.forecast && Array.isArray(data.forecast)) {
-          const forecastPositions: LatLngTuple[] = data.forecast.map((point: { longitude: number, latitude: number }) => [point.latitude, point.longitude]);
-          setForecastTrajectory(forecastPositions);
+          const forecastPositions: LatLngTuple[] = data.forecast.map(
+            (point: { longitude: number; latitude: number }) => [point.latitude, point.longitude]
+          );
+
+          setSatelliteData((prevData) => {
+            const updatedData = { ...prevData };
+            const currentData = updatedData[satelliteId] || {
+              position: null,
+              trajectory: [],
+              forecastTrajectory: []
+            };
+
+            updatedData[satelliteId] = {
+              ...currentData,
+              forecastTrajectory: forecastPositions
+            };
+
+            return updatedData;
+          });
         }
       } catch (error) {
-        console.error("Error fetching satellite forecast trajectory:", error);
+        console.error(`Error fetching forecast for satellite ${satelliteId}:`, error);
       }
     };
 
-    fetchForecastTrajectory();
+	satellites.map((satellite) => fetchForecastTrajectory(satellite.id));
 
-    // Optionally, refresh the forecast periodically
-    const interval = setInterval(fetchForecastTrajectory, 3600000); // Refresh every hour
+    const intervals = satellites.map((satellite) =>
+      setInterval(() => fetchForecastTrajectory(satellite.id), 3600000) // Refresh forecast every hour
+    );
 
-    return () => clearInterval(interval);
-  }, []);
+    return () => intervals.forEach(clearInterval);
+  }, [satellites]);
 
   return (
     <>
-      {/* Render the Landsat 8 satellite position */}
-      {satellitePosition && <Marker position={satellitePosition} icon={customIcon} />}
+      {satellites.map((satellite) => {
+        const data = satelliteData[satellite.id];
+        return (
+          <div key={satellite.id}>
+            {/* Render satellite position */}
+            {data?.position && <Marker position={data.position} icon={satellite.customIcon} />}
 
-      {/* Render the Landsat 8 satellite trajectory */}
-      {satelliteTrajectory.length > 1 && (
-        <Polyline positions={satelliteTrajectory} color="red" />
-      )}
+            {/* Render satellite trajectory */}
+            {data?.trajectory.length > 1 && (
+              <Polyline positions={data.trajectory} color="red" />
+            )}
 
-      {/* Render the forecasted trajectory */}
-      {forecastTrajectory.length > 1 && (
-        <Polyline positions={forecastTrajectory} color="blue" />
-      )}
+            {/* Render forecasted trajectory */}
+            {data?.forecastTrajectory.length > 1 && (
+              <Polyline positions={data.forecastTrajectory} color="blue" />
+            )}
+          </div>
+        );
+      })}
     </>
   );
 }

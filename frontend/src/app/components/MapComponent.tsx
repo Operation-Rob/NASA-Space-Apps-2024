@@ -77,7 +77,7 @@ export default function MapComponent({
         onLatChange={setLatInput}
         onLngChange={setLngInput}
       />
-      <SatelliteLayer customIcon={satelliteIcon} />
+      <SatelliteLayer satellites={[{ id: 'landsat_8', customIcon: satelliteIcon }, { id: 'landsat_9', customIcon: satelliteIcon }]} />
     </MapContainer>
 
     

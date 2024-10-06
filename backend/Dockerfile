@@ -1,5 +1,5 @@
-# Use an official Python runtime as a parent image
-FROM python:3.9-slim
+# Use an image with gdal installed
+FROM ghcr.io/osgeo/gdal:ubuntu-small-latest
 
 # Set the working directory
 WORKDIR /app
@@ -8,7 +8,11 @@ WORKDIR /app
 COPY . .
 
 # Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+RUN pip install --break-system-packages --no-cache-dir -r requirements.txt
 
 # Expose FastAPI default port
 EXPOSE 8000

@@ -1,6 +1,5 @@
 boto3
 fastapi
-numpy
 rasterio
 skyfield
 uvicorn
