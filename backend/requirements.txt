@@ -1,9 +1,15 @@
+boto3
 fastapi
 fastapi-admin
-uvicorn
-skyfield
+psycopg2-binary
 pydantic
 pydantic[email]
 pydantic-settings
-psycopg2-binary
+rasterio
+skyfield
 SQLAlchemy
+uvicorn
+
+# LatLongToWRS dependencies
+GDAL
+shapely
