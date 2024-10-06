@@ -8,6 +8,9 @@ import SearchControl from "./SearchControl";
 import { Pin } from "@/types/types";
 import { Icon, IconOptions, DivIcon } from 'leaflet'; // Ensure these are imported
 
+const VectorTileLayer = dynamic(() => import("./VectorTileLayer"), {
+  ssr: false,
+});
 
 // Dynamically import CustomMarker with SSR disabled
 const CustomMarker = dynamic(() => import("./CustomMarker"), {
@@ -61,11 +64,7 @@ export default function MapComponent({
         attribution="&copy; OpenStreetMap contributors"
       />
 
-     {/* Adding the custom tileserver layer */}
-       <TileLayer
-        url="https://satsync.org/tileserver/data/landsat_grid/{z}/{x}/{y}.pbf"
-        attribution="&copy; Tileserver - Landsat Data"
-      />
+      <VectorTileLayer />
 
       {pins.map((pin) => (
         <CustomMarker
@@ -85,9 +84,5 @@ export default function MapComponent({
       />
       <SatelliteLayer customIcon={satelliteIcon} />
     </MapContainer>
-
-    
-
-
   );
 }
