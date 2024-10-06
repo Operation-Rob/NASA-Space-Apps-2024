@@ -6,15 +6,17 @@ from app.models.subscriber import Subscriber as SubscriberModel
 from app.models.polling import Polling as PollingModel
 from app.core.config import settings
 from app.utils.shared import *
+from app.utils import s3
 from datetime import date
 
 init_db()  # Initialize the database
-conv = ConvertToWRS(shapefile="./app/api/LatLongToWRS/WRS2_descending.shp")
+conv = ConvertToWRS(shapefile="/app/app/api/LatLongToWRS/WRS2_descending.shp")
 
 app = FastAPI(root_path=settings.API_PREFIX)
 
 # Include routers for various endpoints
 app.include_router(satellite.router, prefix="/satellite", tags=["Satellite"])
+app.include_router(sr.router, prefix="/sr", tags=["SR"])
 app.include_router(subscribers.router, prefix="", tags=["Subscribers"])
 
 @app.get("/")

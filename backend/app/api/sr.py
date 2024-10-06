@@ -1,11 +1,13 @@
-from s3 import s3, bucket_name
-from LatLongToWRS.get_wrs import ConvertToWRS
+from ..utils.s3 import s3, bucket_name
+from .LatLongToWRS.get_wrs import ConvertToWRS
 
+from fastapi import APIRouter
 import rasterio
 from rasterio.io import MemoryFile
 from rasterio.warp import transform
 
-conv = ConvertToWRS(shapefile="./LatLongToWRS/WRS2_descending.shp")
+router = APIRouter()
+conv = ConvertToWRS(shapefile="/app/app/api/LatLongToWRS/WRS2_descending.shp")
 
 def get_path_row(lat: float, lng: float) -> tuple[float, float]:
     path_row = conv.get_wrs(lat, lng)
@@ -49,7 +51,7 @@ def get_scene(lat: float, lng: float) -> list[bytes]:
     
     return band_contents
 
-@app.get("/pixel/")
+@router.get("/data/")
 def get_pixel(lat: float, lng: float) -> list[int]:
     band_contents = get_scene(lat, lng)
 

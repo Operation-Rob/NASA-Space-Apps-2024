@@ -8,4 +8,4 @@ class Polling(Base):
     id = Column(Integer, primary_key=True, index=True)
     path = Column(Integer, nullable=False)
     row = Column(Integer, nullable=False)
-    last_updated = Column(Date, default=datetime.date(2024, 9, 1))
+    last_updated = Column(Date, default=date(2024, 9, 1))

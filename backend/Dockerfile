@@ -8,18 +8,12 @@ ENV PYTHONUNBUFFERED=1
 # Set work directory
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y gcc libpq-dev && rm -rf /var/lib/apt/lists/*
-
-# Install dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    python3-pip \
-    && rm -rf /var/lib/apt/lists/*
-RUN pip install --break-system-packages --no-cache-dir -r requirements.txt
-
 # Copy project
 COPY . .
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends gcc libpq-dev python3-pip && rm -rf /var/lib/apt/lists/*
+RUN pip install --break-system-packages --no-cache-dir -r requirements.txt
 
 EXPOSE 8000
 
