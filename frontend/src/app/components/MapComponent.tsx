@@ -80,7 +80,6 @@ export default function MapComponent({
         onLngChange={setLngInput}
       />
       <SatelliteLayer customIcon={satelliteIcon} />
-      <GridLayer minZoom={8} />
     </MapContainer>
 
     

@@ -90,7 +90,7 @@ def subscribe(
     confirm_url = f"{request.url_for('confirm_subscription')}?token={token_str}"
 
     subject = "Confirm your subscription"
-    with open("./email_template.html", "r") as file:
+    with open("/backend/emails/email_template.html", "r") as file:
         html_template = file.read()
 
     # Use Python string formatting (or Jinja2) to insert the confirmation URL
