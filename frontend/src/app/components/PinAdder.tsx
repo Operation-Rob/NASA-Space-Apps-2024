@@ -2,13 +2,7 @@
 import { useMapEvents } from 'react-leaflet/hooks';
 import { Dispatch, SetStateAction } from 'react';
 import { LatLng } from 'leaflet';
-
-interface Pin {
-  id: number;
-  lat: number;
-  lng: number;
-  name: string;
-}
+import { Pin } from '@/types/types';
 
 interface PinAdderProps {
   pins: Pin[];
@@ -23,6 +17,9 @@ const PinAdder: React.FC<PinAdderProps> = ({ pins, setPins }) => {
         lat: e.latlng.lat,
         lng: e.latlng.lng,
         name: `Location ${pins.length + 1}`,
+        loading: true,
+        data: null,
+        error: null,
       };
       setPins((prevPins) => [...prevPins, newPin]);
     },

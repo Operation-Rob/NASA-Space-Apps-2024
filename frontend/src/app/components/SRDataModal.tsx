@@ -1,16 +1,14 @@
 // components/SRDataModal.tsx
-"use client";
-
-import { useState, useEffect } from "react";
+import React from "react";
 import Modal from "./Modal";
 import { Pin } from "@/types/types";
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
+  CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from "recharts";
 
@@ -19,60 +17,43 @@ interface SRDataModalProps {
   onClose: () => void;
 }
 
-interface SRDataPoint {
-  date: string;
-  [key: string]: string | number;
-}
+const SRDataModal: React.FC<SRDataModalProps> = ({ pin, onClose }) => {
+  if (pin.error != null) {
+    return (
+      <Modal title={pin.name.concat(" Reflectance Data")} onClose={onClose}>
+        <p className="text-red-500">{pin.error}</p>
+      </Modal>
+    );
+  }
 
+  if (!pin.data) {
+    return null; // You could also show a message like "Loading data..." or "No data available"
+  }
 
-export default function SRDataModal({ pin, onClose }: SRDataModalProps) {
-  const [srData, setSrData] = useState<SRDataPoint[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    // Fetch SR data for the pin's location
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        // Replace with your actual API endpoint and parameters
-        const response = await fetch(`/api/sr-data?lat=${pin.lat}&lng=${pin.lng}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch SR data");
-        }
-        const data = await response.json();
-        setSrData(data);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (err: any) {
-        setError(err.message || "An error occurred");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [pin.lat, pin.lng]);
+  // Transform the pin data into a format that Recharts can use
+  const chartData = Object.keys(pin.data).map((key) => ({
+    name: key,
+    value: pin.data[key],
+  }));
 
   return (
-    <Modal onClose={onClose} title={`SR Data for ${pin.name}`} size="large">
-      {loading ? (
-        <div>Loading data...</div>
-      ) : error ? (
-        <div className="text-red-500">{error}</div>
-      ) : (
-        <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={srData}>
-            <XAxis dataKey="date" />
+    <Modal title={pin.name.concat(" Reflectance Data")} onClose={onClose}>
+      <div style={{ width: "100%", height: 300 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={chartData}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
-            <Legend />
-            {/* Assuming data includes SR values for different bands */}
-            <Line type="monotone" dataKey="band1" stroke="#8884d8" />
-            <Line type="monotone" dataKey="band2" stroke="#82ca9d" />
-            {/* Add lines for other bands as needed */}
-          </LineChart>
+            <Bar dataKey="value" fill="#8884d8" />
+          </BarChart>
         </ResponsiveContainer>
-      )}
+      </div>
     </Modal>
   );
-}
+};
+
+export default SRDataModal;
