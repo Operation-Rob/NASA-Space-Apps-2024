@@ -61,6 +61,12 @@ export default function MapComponent({
         attribution="&copy; OpenStreetMap contributors"
       />
 
+     {/* Adding the custom tileserver layer */}
+       <TileLayer
+        url="https://satsync.org/tileserver/data/landsat_grid/{z}/{x}/{y}.pbf"
+        attribution="&copy; Tileserver - Landsat Data"
+      />
+
       {pins.map((pin) => (
         <CustomMarker
           key={pin.id}
