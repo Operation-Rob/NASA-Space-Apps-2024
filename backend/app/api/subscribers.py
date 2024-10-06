@@ -129,21 +129,17 @@ def unsubscribe(token: str, db: Session = Depends(get_db)):
     else:
         raise HTTPException(status_code=404, detail="Subscriber not found.")
 
-def send_updates(db: Session):
-    for subscriber in db.query(SubscriberModel).filter(
-        SubscriberModel.active == True,
-        SubscriberModel.unsubscribed == False
-    ).all():
-        # Generate unsubscribe token and link
-        token_str = generate_token(subscriber.email, db)
-        unsubscribe_url = f"https://satsync.org/api/unsubscribe?token={token_str}"
+def send_updates(subscriber: SubscriberModel, db: Session):
+    # Generate unsubscribe token and link
+    token_str = generate_token(subscriber.email, db)
+    unsubscribe_url = f"https://satsync.org/api/unsubscribe?token={token_str}"
 
-        # Send update email
-        subject = "New Landsat Data Update"
-        body = f"""
-        <p>Hello,</p>
-        <p>There is a new update for your subscribed area.</p>
-        <p><a href="{unsubscribe_url}">Unsubscribe</a></p>
-        """
+    # Send update email
+    subject = "New Landsat Data Update"
+    body = f"""
+    <p>Hello,</p>
+    <p>There is a new update for your subscribed area.</p>
+    <p><a href="{unsubscribe_url}">Unsubscribe</a></p>
+    """
 
-        send_email(subscriber.email, subject, body)
+    send_email(subscriber.email, subject, body)
