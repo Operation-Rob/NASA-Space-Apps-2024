@@ -39,5 +39,14 @@ services:
     depends_on:
       - backend
 
+  tileserver:
+    image: maptiler/tileserver-gl
+    container_name: tileserver
+    volumes:
+      - /data:/data
+    command: --verbose --file /data/landsat_grid.mbtiles --public_url /tileserver/
+    depends_on:
+      - frontend
+
 volumes:
   postgres_data:
