@@ -1,4 +1,5 @@
 from ..utils.s3 import s3, bucket_name
+from ..utils.shared import scale_value
 from .LatLongToWRS.get_wrs import ConvertToWRS
 
 from fastapi import APIRouter
@@ -73,4 +74,4 @@ def get_pixel(lat: float, lng: float) -> list[int]:
     with concurrent.futures.ThreadPoolExecutor() as executor:
         values = list(executor.map(lambda content: process_band(content, lat, lng), band_contents))
 
-    return values
+    return map(scale_value, values)

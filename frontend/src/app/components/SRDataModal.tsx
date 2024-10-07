@@ -21,13 +21,13 @@ interface SRDataModalProps {
 const SRDataModal: React.FC<SRDataModalProps> = ({ pin, onClose }) => {
   // Define the chart data with random values between 0 and 1
   const chartData = [
-    { name: "Coastal/Aerosol", value: Math.random() },
-    { name: "Blue", value: Math.random() },
-    { name: "Green", value: Math.random() },
-    { name: "Red", value: Math.random() },
-    { name: "NIR", value: Math.random() },
-    { name: "SWIR 1", value: Math.random() },
-    { name: "SWIR 2", value: Math.random() },
+    { name: "Coastal/Aerosol", value: pin.data[0] },
+    { name: "Blue", value: pin.data[1] },
+    { name: "Green", value: pin.data[2] },
+    { name: "Red", value: pin.data[3] },
+    { name: "NIR", value: pin.data[4] },
+    { name: "SWIR 1", value: pin.data[5] },
+    { name: "SWIR 2", value: pin.data[6] },
   ];
 
   return (
