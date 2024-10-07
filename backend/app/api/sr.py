@@ -5,6 +5,7 @@ from fastapi import APIRouter
 import rasterio
 from rasterio.io import MemoryFile
 from rasterio.warp import transform
+import concurrent.futures
 
 router = APIRouter()
 conv = ConvertToWRS(shapefile="/app/app/api/LatLongToWRS/WRS2_descending.shp")
@@ -19,6 +20,12 @@ def get_path_row(lat: float, lng: float) -> tuple[float, float]:
     row = path_row[0]['row']
 
     return path, row
+
+def download_band(name: str, band: int) -> bytes:
+    obj_key = name+name.split('/')[-2]+'_SR_B'+str(band)+'.TIF'
+    response = s3.get_object(Bucket=bucket_name, Key=obj_key, RequestPayer='requester')
+    content = response['Body'].read()
+    return content
 
 def get_scene(lat: float, lng: float) -> list[bytes]:
     path, row = get_path_row(lat, lng)
@@ -42,28 +49,28 @@ def get_scene(lat: float, lng: float) -> list[bytes]:
 
     prefixes.sort(key=lambda x: x[10:-6], reverse=True)
     
-    band_contents = []
-    for band in range(1,8):
-        obj_key = prefixes[0]+prefixes[0].split('/')[-2]+'_SR_B'+str(band)+'.TIF'
-        response = s3.get_object(Bucket=bucket_name, Key=obj_key, RequestPayer='requester')
-        content = response['Body'].read()
-        band_contents.append(content)
+    bands = range(1,8)
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        band_contents = list(executor.map(lambda x: download_band(prefixes[0], x), bands))
     
     return band_contents
+
+def process_band(content: bytes, lat: float, lng: float) -> int:
+    with MemoryFile(content) as scene_file:
+        with scene_file.open() as scene:
+            x, y = transform('EPSG:4326', scene.crs, [lng], [lat])
+            row, col = scene.index(x[0], y[0])
+            value = scene.read(1)[row,col]    # read from band 1
+            if not value:
+                print(f"Note: found None value for pixel lat: {lat} lng: {lng}")
+            return int(value)
+            
 
 @router.get("/data/")
 def get_pixel(lat: float, lng: float) -> list[int]:
     band_contents = get_scene(lat, lng)
 
-    values = []
-    for content in band_contents:
-        with MemoryFile(content) as scene_file:
-            with scene_file.open() as scene:
-                x, y = transform('EPSG:4326', scene.crs, [lng], [lat])
-                row, col = scene.index(x[0], y[0])
-                value = scene.read(1)[row,col]    # read from band 1
-                values.append(int(value))
-                if not value:
-                    print(f"Note: found None value for pixel lat: {lat} lng: {lng}")
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        values = list(executor.map(lambda content: process_band(content, lat, lng), band_contents))
 
     return values
