@@ -6,6 +6,6 @@ export interface Pin {
   name: string;
   loading: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: number[]; // Replace 'any' with the actual data type
+  data: number[] | null; // Replace 'any' with the actual data type
   error: string | null; // Replace 'any' with the actual error type
 }
