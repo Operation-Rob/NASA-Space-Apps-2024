@@ -58,7 +58,7 @@ def get_scene(lat: float, lng: float) -> list[bytes]:
 
 def process_band(content: bytes, lat: float, lng: float) -> int:
     with MemoryFile(content) as scene_file:
-        with scene_file.open('r+', sharing=False) as scene:
+        with scene_file.open() as scene:
             x, y = transform('EPSG:4326', scene.crs, [lng], [lat])
             row, col = scene.index(x[0], y[0])
 
