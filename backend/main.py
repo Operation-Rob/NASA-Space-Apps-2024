@@ -7,7 +7,7 @@ from app.models.subscriber import Subscriber as SubscriberModel
 from app.models.polling import Polling as PollingModel
 from app.core.config import settings
 from app.utils.shared import *
-from app.utils import s3
+from app.utils.s3 import s3
 from datetime import date, datetime
 import time
 import threading
