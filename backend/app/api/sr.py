@@ -58,10 +58,12 @@ def get_scene(lat: float, lng: float) -> list[bytes]:
 
 def process_band(content: bytes, lat: float, lng: float) -> int:
     with MemoryFile(content) as scene_file:
-        with scene_file.open() as scene:
+        with scene_file.open('r+', sharing=False) as scene:
             x, y = transform('EPSG:4326', scene.crs, [lng], [lat])
             row, col = scene.index(x[0], y[0])
-            value = scene.read(1)[row,col]    # read from band 1
+
+            window = rasterio.windows.Window(col, row, 1, 1)
+            value = scene.read(1, window=window)[row,col]    # read from band 1
             if not value:
                 print(f"Note: found None value for pixel lat: {lat} lng: {lng}")
             return int(value)
