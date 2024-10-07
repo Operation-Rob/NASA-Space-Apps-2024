@@ -19,7 +19,7 @@ export default function PinListItem({ pin, setPins, index }: PinListItemProps) {
 
   useEffect(() => {
     if (pin.loading) {
-      fetch(`/api/sr/data?lat=${pin.lat}&lng=${pin.lng}`)
+      fetch(`https://satsync.org/api/sr/data?lat=${pin.lat}&lng=${pin.lng}`)
         .then((response) => response.json())
         .then((data) => {
           setPins((prevPins) =>
