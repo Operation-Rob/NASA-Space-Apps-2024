@@ -63,7 +63,7 @@ def process_band(content: bytes, lat: float, lng: float) -> int:
             row, col = scene.index(x[0], y[0])
 
             window = rasterio.windows.Window(col, row, 1, 1)
-            value = scene.read(1, window=window)[row,col]    # read from band 1
+            value = scene.read(1, window=window)[0,0]    # read from band 1
             if not value:
                 print(f"Note: found None value for pixel lat: {lat} lng: {lng}")
             return int(value)
