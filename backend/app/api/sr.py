@@ -68,7 +68,7 @@ def process_band(content: bytes, lat: float, lng: float) -> int:
             
 
 @router.get("/data/")
-def get_pixel(lat: float, lng: float) -> list[int]:
+def get_pixel(lat: float, lng: float) -> list[float]:
     band_contents = get_scene(lat, lng)
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
