@@ -4,8 +4,6 @@
 
 **Welcome to Satsync!** We are revolutionizing the accessibility of Landsat data to empower everyone—from researchers to environmental enthusiasts—to explore the Earth's surface changes with ease. Landsat has provided the longest continuous dataset of remotely sensed Earth observations, but accessing and using this treasure trove of information has been complex and cumbersome. **Satsync** is here to change that, creating an **ultra user-friendly, interactive web platform** that makes Landsat data as simple as adding a pin to a map.
 
-![App Preview](https://github.com/yourproject/satsync/assets/preview_image) *(Placeholder for an actual screenshot of your app)*
-
 ---
 
 ## 🛰️ The Problem We're Solving
