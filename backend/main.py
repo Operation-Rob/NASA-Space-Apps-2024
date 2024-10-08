@@ -7,7 +7,7 @@ from app.models.subscriber import Subscriber as SubscriberModel
 from app.models.polling import Polling as PollingModel
 from app.core.config import settings
 from app.utils.shared import *
-from app.utils.s3 import s3
+from app.utils.s3 import s3, bucket_name
 from datetime import date, datetime
 import time
 import threading
@@ -44,7 +44,7 @@ def polling_task():
                     prefix = f'collection02/level-2/standard/oli-tirs/{current_year}/{str(path).zfill(3)}/{str(row).zfill(3)}/'
 
                     response = s3.list_objects_v2(
-                        Bucket=s3.bucket_name,
+                        Bucket=bucket_name,
                         Prefix=prefix,
                         RequestPayer='requester',
                         Delimiter='/'
