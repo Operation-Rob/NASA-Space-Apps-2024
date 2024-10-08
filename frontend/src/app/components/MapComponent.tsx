@@ -4,27 +4,24 @@
 import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
 import PinAdder from "./PinAdder";
-import SearchControl from "./SearchControl";
 import { Pin } from "@/types/types";
-import { Icon, IconOptions, DivIcon } from "leaflet"; // Ensure these are imported
+import { Icon, IconOptions, DivIcon } from "leaflet";
 import { useRef } from "react";
 import { Map as LeafletMap } from "leaflet";
+import SearchControl from "./SearchControl"; // Import remains for desktop view
 
 const VectorTileLayer = dynamic(() => import("./VectorTileLayer"), {
   ssr: false,
 });
 
-// Dynamically import CustomMarker with SSR disabled
 const CustomMarker = dynamic(() => import("./CustomMarker"), {
   ssr: false,
 });
 
-// Dynamically import SatelliteLayer with SSR disabled
 const SatelliteLayer = dynamic(() => import("./SatelliteLayer"), {
   ssr: false,
 });
 
-// Similarly, dynamically import MapContainer and TileLayer
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
   { ssr: false }
@@ -55,26 +52,32 @@ export default function MapComponent({
   setLatInput,
   setLngInput,
 }: MapComponentProps) {
-  const mapRef = useRef<{'target': LeafletMap} | null>(null);
+  const mapRef = useRef<{ target: LeafletMap } | null>(null);
 
   return (
     <div className="relative h-full w-full">
-      {/* Render SearchControl outside of MapContainer */}
+      {/* Render SearchControl outside of MapContainer for desktop */}
       {mapRef.current && (
-        <SearchControl
-          latInput={latInput}
-          lngInput={lngInput}
-          onLatChange={setLatInput}
-          onLngChange={setLngInput}
-          map={mapRef.current}
-        />
+        <div className="hidden md:block absolute top-4 left-1/2 transform -translate-x-1/2 w-11/12 max-w-xl z-50">
+          <SearchControl
+            latInput={latInput}
+            lngInput={lngInput}
+            onLatChange={setLatInput}
+            onLngChange={setLngInput}
+            map={mapRef.current}
+          />
+        </div>
       )}
 
       <MapContainer
         center={[0, 0]}
         zoom={3}
         className="absolute inset-0 h-full w-full z-0"
-        whenReady={(mapInstance: { target: LeafletMap; } | null) => { mapRef.current = mapInstance; }}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        whenReady={(mapInstance: { target: LeafletMap } | null) => {
+          mapRef.current = mapInstance;
+        }}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

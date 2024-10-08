@@ -40,3 +40,17 @@ body {
     transform: rotate(360deg);
   }
 }
+
+/* styles.css or your global CSS file */
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s ease-out;
+}

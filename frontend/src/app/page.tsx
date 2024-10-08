@@ -8,7 +8,7 @@ import Sidebar from "./components/Sidebar";
 import SavePinsModal from "./components/SavePinsModal";
 import LoadPinsModal from "./components/LoadPinsModal";
 import SubscribeModal from "./components/SubscribeModal";
-import SidebarToggle from "./components/SidebarToggle"; // New import
+import SidebarToggle from "./components/SidebarToggle";
 import { Pin } from "@/types/types";
 
 export default function LandsatMap() {
@@ -20,7 +20,7 @@ export default function LandsatMap() {
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [isLoadModalOpen, setIsLoadModalOpen] = useState(false);
   const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // New state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
     <div className="relative h-screen w-screen">
@@ -42,8 +42,12 @@ export default function LandsatMap() {
         setIsSaveModalOpen={setIsSaveModalOpen}
         setIsLoadModalOpen={setIsLoadModalOpen}
         setIsSubscribeModalOpen={setIsSubscribeModalOpen}
-        isOpen={isSidebarOpen} // Pass isOpen prop
-        setIsSidebarOpen={setIsSidebarOpen} // Pass toggle function
+        isOpen={isSidebarOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
+        latInput={latInput}
+        lngInput={lngInput}
+        setLatInput={setLatInput}
+        setLngInput={setLngInput}
       />
       <SidebarToggle
         isOpen={isSidebarOpen}
