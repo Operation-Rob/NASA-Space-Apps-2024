@@ -12,6 +12,8 @@ interface SidebarProps {
   setIsSaveModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIsLoadModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIsSubscribeModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isOpen: boolean; // New prop
+  setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>; // New prop
 }
 
 export default function Sidebar({
@@ -20,6 +22,8 @@ export default function Sidebar({
   setIsSaveModalOpen,
   setIsLoadModalOpen,
   setIsSubscribeModalOpen,
+  isOpen,
+  setIsSidebarOpen,
 }: SidebarProps) {
   // State for sidebar width
   const [sidebarWidth, setSidebarWidth] = useState(320); // Default width in pixels
@@ -62,11 +66,30 @@ export default function Sidebar({
 
   return (
     <>
+      {/* Backdrop */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-30 z-30 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        ></div>
+      )}
+
       <div
-        className="absolute top-0 left-0 h-full p-4 flex flex-col bg-white bg-opacity-90 shadow-lg z-40"
+        className={`absolute top-0 left-0 h-full p-4 flex flex-col bg-white bg-opacity-90 shadow-lg z-40 transform transition-transform duration-300 ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0`}
         style={{ width: sidebarWidth }}
       >
-        <h2 className="text-2xl font-bold mb-4">Your Pins</h2>
+        <h2 className="text-2xl font-bold mb-4 flex justify-between items-center">
+          Your Pins
+          {/* Close button for mobile */}
+          <button
+            className="md:hidden text-gray-600 hover:text-gray-800 focus:outline-none"
+            onClick={() => setIsSidebarOpen(false)}
+          >
+            ✕
+          </button>
+        </h2>
 
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="pins">
@@ -112,10 +135,10 @@ export default function Sidebar({
         </button>
       </div>
 
-      {/* Resizer */}
+      {/* Resizer for desktop only */}
       <div
         ref={resizerRef}
-        className="absolute top-0 left-0 h-full z-50 cursor-col-resize"
+        className="absolute top-0 left-0 h-full z-50 cursor-col-resize hidden md:block"
         style={{ left: sidebarWidth - 5, width: 10 }}
         onMouseDown={handleMouseDown}
       ></div>
