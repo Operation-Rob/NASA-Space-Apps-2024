@@ -6,7 +6,9 @@ import "leaflet/dist/leaflet.css";
 import PinAdder from "./PinAdder";
 import SearchControl from "./SearchControl";
 import { Pin } from "@/types/types";
-import { Icon, IconOptions, DivIcon } from 'leaflet'; // Ensure these are imported
+import { Icon, IconOptions, DivIcon } from "leaflet"; // Ensure these are imported
+import { useRef } from "react";
+import { Map as LeafletMap } from "leaflet";
 
 const VectorTileLayer = dynamic(() => import("./VectorTileLayer"), {
   ssr: false,
@@ -53,36 +55,53 @@ export default function MapComponent({
   setLatInput,
   setLngInput,
 }: MapComponentProps) {
+  const mapRef = useRef<{'target': LeafletMap} | null>(null);
+
   return (
-    <MapContainer
-      center={[0, 0]}
-      zoom={3}
-      className="absolute inset-0 h-full w-full z-0"
-    >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution="&copy; OpenStreetMap contributors"
-      />
-
-      <VectorTileLayer />
-
-      {pins.map((pin) => (
-        <CustomMarker
-          key={pin.id}
-          pin={pin}
-          customIcon={customIcon}
-          onDelete={(id) => setPins((prevPins) => prevPins.filter((p) => p.id !== id))}
+    <div className="relative h-full w-full">
+      {/* Render SearchControl outside of MapContainer */}
+      {mapRef.current && (
+        <SearchControl
+          latInput={latInput}
+          lngInput={lngInput}
+          onLatChange={setLatInput}
+          onLngChange={setLngInput}
+          map={mapRef.current}
         />
-      ))}
+      )}
 
-      <PinAdder pins={pins} setPins={setPins} />
-      <SearchControl
-        latInput={latInput}
-        lngInput={lngInput}
-        onLatChange={setLatInput}
-        onLngChange={setLngInput}
-      />
-      <SatelliteLayer satellites={[{ id: 'landsat_8', customIcon: satelliteIcon }, { id: 'landsat_9', customIcon: satelliteIcon }]} />
-    </MapContainer>
+      <MapContainer
+        center={[0, 0]}
+        zoom={3}
+        className="absolute inset-0 h-full w-full z-0"
+        whenReady={(mapInstance: { target: LeafletMap; } | null) => { mapRef.current = mapInstance; }}
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution="&copy; OpenStreetMap contributors"
+        />
+
+        <VectorTileLayer />
+
+        {pins.map((pin) => (
+          <CustomMarker
+            key={pin.id}
+            pin={pin}
+            customIcon={customIcon}
+            onDelete={(id) =>
+              setPins((prevPins) => prevPins.filter((p) => p.id !== id))
+            }
+          />
+        ))}
+
+        <PinAdder pins={pins} setPins={setPins} />
+        <SatelliteLayer
+          satellites={[
+            { id: "landsat_8", customIcon: satelliteIcon },
+            { id: "landsat_9", customIcon: satelliteIcon },
+          ]}
+        />
+      </MapContainer>
+    </div>
   );
 }

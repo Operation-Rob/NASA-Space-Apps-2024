@@ -1,41 +1,54 @@
 // File: app/map/components/SearchControl.tsx
-import { useMap } from 'react-leaflet/hooks';
-import React from 'react';
+import React from "react";
+import { Map as LeafletMap } from "leaflet";
 
 interface SearchControlProps {
   latInput: string;
   lngInput: string;
   onLatChange: (value: string) => void;
   onLngChange: (value: string) => void;
+  map: { 'target': LeafletMap };
 }
 
-const SearchControl: React.FC<SearchControlProps> = ({ latInput, lngInput, onLatChange, onLngChange }) => {
-  const map = useMap();
-
-const handleSearch = (e: React.MouseEvent<HTMLButtonElement>) => {
-
+const SearchControl: React.FC<SearchControlProps> = ({
+  latInput,
+  lngInput,
+  onLatChange,
+  onLngChange,
+  map,
+}) => {
+  const handleSearch = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     if (latInput && lngInput) {
-        const lat = parseFloat(latInput);
-        const lng = parseFloat(lngInput);
-        if (!isNaN(lat) && !isNaN(lng)) {
-            map.flyTo([lat, lng], 15, { animate: true });
-        }
+      const lat = parseFloat(latInput);
+      const lng = parseFloat(lngInput);
+      if (!isNaN(lat) && !isNaN(lng)) {
+        map.target.flyTo([lat, lng], 15, { animate: true });
+      }
     }
-};
+  };
+
+  // Handler to stop event propagation
+  const stopPropagation = (e: React.MouseEvent | React.WheelEvent | React.TouchEvent) => {
+    e.stopPropagation();
+  };
 
   return (
     <div
       className="absolute top-4 left-1/2 transform -translate-x-1/2 w-11/12 max-w-xl p-4 bg-white bg-opacity-90 rounded-lg shadow-lg flex items-center"
-      style={{ zIndex: 1000 }} // Set zIndex higher to ensure it's above the map
+      style={{ zIndex: 1000, pointerEvents: "auto" }}
+      onMouseDown={stopPropagation}
+      onClick={stopPropagation}
+      onDoubleClick={stopPropagation}
+      onWheel={stopPropagation}
+      onTouchStart={stopPropagation}
     >
       <input
         type="text"
         placeholder="Latitude"
         value={latInput}
         onChange={(e) => onLatChange(e.target.value)}
-        onClick={(e) => e.stopPropagation()} // Stop the click event from reaching the map
         className="flex-1 p-2 mr-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       <input
@@ -43,7 +56,6 @@ const handleSearch = (e: React.MouseEvent<HTMLButtonElement>) => {
         placeholder="Longitude"
         value={lngInput}
         onChange={(e) => onLngChange(e.target.value)}
-        onClick={(e) => e.stopPropagation()} // Stop the click event from reaching the map
         className="flex-1 p-2 mr-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       <button
