@@ -2,6 +2,7 @@ from ..utils.s3 import s3, bucket_name
 from ..utils.shared import scale_value
 from .LatLongToWRS.get_wrs import ConvertToWRS
 
+import os
 from fastapi import APIRouter
 import rasterio
 from rasterio.io import MemoryFile
@@ -30,6 +31,11 @@ def download_band(name: str, band: int) -> bytes:
 
 def get_scene(lat: float, lng: float) -> list[bytes]:
     path, row = get_path_row(lat, lng)
+    
+    for file in os.listdir("/tmp"):
+        if not os.path.isfile(file):
+            continue
+        pass
 
     prefix = 'collection02/level-2/standard/oli-tirs/2024/'+str(path).zfill(3)+'/'+str(row).zfill(3)+'/'    # TODO: allow years other than 2024
 
@@ -46,7 +52,9 @@ def get_scene(lat: float, lng: float) -> list[bytes]:
             prefixes.append(cp['Prefix'])
 
     if len(prefixes) == 0:
-        raise Exception("No scenes found for given lat-lng")
+        print("No scenes found for given lat-lng. (Probably an ocean square)")
+        return []
+        #raise Exception("No scenes found for given lat-lng")
 
     prefixes.sort(key=lambda x: x[10:-6], reverse=True)
     
@@ -72,6 +80,9 @@ def process_band(content: bytes, lat: float, lng: float) -> int:
 @router.get("/data/")
 def get_pixel(lat: float, lng: float) -> list[float]:
     band_contents = get_scene(lat, lng)
+
+    if band_contents == []:
+        return []
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
         values = list(executor.map(lambda content: process_band(content, lat, lng), band_contents))

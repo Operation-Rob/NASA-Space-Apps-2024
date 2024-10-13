@@ -57,7 +57,7 @@ def polling_task():
 
                     for prefix in prefixes:
                         # Extract date using regex
-                        match = re.search(r'/(\d{4})(\d{2})(\d{2})/', prefix)
+                        match = re.search(r'_(\d{4})(\d{2})(\d{2})_', prefix)
                         if match:
                             year, month, day = match.groups()
                             parsed_date = date(int(year), int(month), int(day))
