@@ -29,7 +29,7 @@ def download_band(name: str, band: int) -> bytes:
     response = s3.get_object(Bucket=bucket_name, Key=obj_key, RequestPayer='requester')
     print("download_band response: " + str(response))
     content = response['Body'].read()
-    print("download_band content: " + str(content))
+    print("download_band content len: " + len(content))
     return content
 
 def get_scene(lat: float, lng: float) -> list[bytes]:
