@@ -36,7 +36,9 @@ def get_scene(lat: float, lng: float) -> list[bytes]:
         if not os.path.isfile(file):
             continue
         pass
-
+    
+    print("get_scene: listing objects")
+    
     prefix = 'collection02/level-2/standard/oli-tirs/2024/'+str(path).zfill(3)+'/'+str(row).zfill(3)+'/'    # TODO: allow years other than 2024
 
     response = s3.list_objects_v2(
@@ -45,6 +47,8 @@ def get_scene(lat: float, lng: float) -> list[bytes]:
         RequestPayer='requester',
         Delimiter='/'
     )
+
+    print("get_scene; looping for CommonPrefixes")
 
     prefixes = []
     if 'CommonPrefixes' in response:
@@ -56,11 +60,15 @@ def get_scene(lat: float, lng: float) -> list[bytes]:
         return []
         #raise Exception("No scenes found for given lat-lng")
 
+    print("get_scene: sorting prefixes")
+
     prefixes.sort(key=lambda x: x[10:-6], reverse=True)
     
+    print("get_scene: multithreading started")
     bands = range(1,8)
     with concurrent.futures.ThreadPoolExecutor() as executor:
         band_contents = list(executor.map(lambda x: download_band(prefixes[0], x), bands))
+    print("get_scene: multithreading finished")
     
     return band_contents
 
@@ -79,13 +87,17 @@ def process_band(content: bytes, lat: float, lng: float) -> int:
 
 @router.get("/data/")
 def get_pixel(lat: float, lng: float) -> list[float]:
+    print("started get_pixel call")
     band_contents = get_scene(lat, lng)
+    print("get_scene finished processing")
 
     if band_contents == []:
         return []
 
+    print("multithreading started")
     with concurrent.futures.ThreadPoolExecutor() as executor:
         values = list(executor.map(lambda content: process_band(content, lat, lng), band_contents))
+    print("multithreading finished")
 
     vals = map(scale_value, values)
     print("get_pixel returned: " + str(list(vals)))
