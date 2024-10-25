@@ -36,6 +36,7 @@ export default function PinListItem({ pin, setPins, index }: PinListItemProps) {
                 : p
             )
           );
+          console.log(error.toString());
         });
     }
   }, [pin.loading, pin.id, pin.lat, pin.lng, setPins]);

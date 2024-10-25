@@ -87,4 +87,6 @@ def get_pixel(lat: float, lng: float) -> list[float]:
     with concurrent.futures.ThreadPoolExecutor() as executor:
         values = list(executor.map(lambda content: process_band(content, lat, lng), band_contents))
 
-    return map(scale_value, values)
+    vals = map(scale_value, values)
+    print("get_pixel returned: " + str(vals))
+    return vals
