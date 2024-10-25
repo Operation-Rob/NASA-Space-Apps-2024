@@ -22,7 +22,7 @@ export default function PinListItem({ pin, setPins, index }: PinListItemProps) {
       fetch(`/api/sr/data/?lat=${pin.lat}&lng=${pin.lng}`)
         .then((response) => { 
           console.log(response);
-          response.json();
+          return response.json();
         })
         .then((data) => {
           setPins((prevPins) =>
