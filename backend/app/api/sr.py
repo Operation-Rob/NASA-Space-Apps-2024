@@ -88,5 +88,5 @@ def get_pixel(lat: float, lng: float) -> list[float]:
         values = list(executor.map(lambda content: process_band(content, lat, lng), band_contents))
 
     vals = map(scale_value, values)
-    print("get_pixel returned: " + str(vals))
+    print("get_pixel returned: " + str(list(vals)))
     return vals
