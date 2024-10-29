@@ -30,6 +30,10 @@ services:
       - ./.env
     depends_on:
       - db
+    deploy:
+      resources:
+        limits:
+          memory: 1G
 
   nginx:
     build: ./nginx
