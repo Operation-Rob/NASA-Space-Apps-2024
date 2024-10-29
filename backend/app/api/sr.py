@@ -25,12 +25,12 @@ def get_path_row(lat: float, lng: float) -> tuple[float, float]:
 
 def download_band(name: str, band: int) -> bytes:
     obj_key = name+name.split('/')[-2]+'_SR_B'+str(band)+'.TIF'
-    print("started download_band")
+    print("started download_band (" + name + " " + str(band) + ")")
     response = s3.get_object(Bucket=bucket_name, Key=obj_key, RequestPayer='requester')
-    print("download_band response: " + str(response))
+    print("download_band (" + name + " " + str(band) + ") response: " + str(response))
     content = response['Body'].read()
     response['Body'].close()
-    print("download_band content len: " + str(len(content)))
+    print("download_band (" + name + " " + str(band) + ") content len: " + str(len(content)))
     return content
 
 def get_scene(lat: float, lng: float) -> list[bytes]:
