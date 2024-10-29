@@ -72,6 +72,7 @@ def get_scene(lat: float, lng: float) -> list[bytes]:
     bands = range(1,8)
     with concurrent.futures.ThreadPoolExecutor() as executor:
         band_contents = list(executor.map(lambda x: download_band(prefixes[0], x), bands))
+        print("band_contents = " + str(band_contents))
     print("get_scene: multithreading finished")
     
     return band_contents
