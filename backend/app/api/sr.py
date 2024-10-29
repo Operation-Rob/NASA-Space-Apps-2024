@@ -30,7 +30,7 @@ def download_band(name: str, band: int) -> bytes:
     print("download_band response: " + str(response))
     content = response['Body'].read()
     response['Body'].close()
-    print("download_band content len: " + len(content))
+    print("download_band content len: " + str(len(content)))
     return content
 
 def get_scene(lat: float, lng: float) -> list[bytes]:
