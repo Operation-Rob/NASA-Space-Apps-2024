@@ -1,3 +1,8 @@
+# Video
+
+[![Satsync Video](https://img.youtube.com/vi/TdFrBWH-O6U/0.jpg)](https://www.youtube.com/watch?v=TdFrBWH-O6U)
+
+
 # 🌍 Satsync: Landsat Data at Your Fingertips
 
 ### Empowering Users to Effortlessly Track Landsat Surface Reflectance Changes
